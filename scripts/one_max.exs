@@ -21,9 +21,20 @@ crossover = fn population ->
   end)
 end
 
+mutation = fn population ->
+  population
+  |> Enum.map(fn chromosome ->
+    if :rand.uniform() < 0.05 do
+      Enum.shuffle(chromosome)
+    else
+      chromosome
+    end
+  end)
+end
+
 algorithm = fn population, algorithm ->
   best = Enum.max_by(population, &Enum.sum/1)
-  IO.write("current best:" <> Integer.to_string(best))
+  IO.write("current best:" <> Integer.to_string(Enum.sum(best)) <> "\n")
 
   if Enum.sum(best) == 1000 do
     best
@@ -32,8 +43,11 @@ algorithm = fn population, algorithm ->
     |> evaluate.()
     |> selection.()
     |> crossover.()
+    |> mutation.()
     |> algorithm.(algorithm)
   end
 end
 
-algorithm.(population, algorithm)
+solution = algorithm.(population, algorithm)
+IO.write("\n Solution is: \n")
+IO.inspect(solution)
