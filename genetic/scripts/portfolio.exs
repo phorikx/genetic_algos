@@ -15,11 +15,20 @@ defmodule Portfolio do
 
   @impl true
   def fitness_function(chromosome) do
-    # TODO
+    chromosome.genes
+    |> Enum.map(fn {roi, risk} -> 2*roi - risk end)
+    |> Enum.sum()
   end
 
+  @impl true
   def terminate?(population, _generation) do
-    max_value = Enum.max_by(population, &Portfolio.fitness_function/1)
-    max_value > @target_fitness
+    max_value = fitness_function(hd(population))
+    max_value >= @target_fitness
   end
 end
+
+soln = Genetic.run(Portfolio)
+IO.write("\n")
+IO.write("Best solution: " <> inspect(soln))
+IO.write("\n")
+
