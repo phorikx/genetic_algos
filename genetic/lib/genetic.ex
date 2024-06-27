@@ -42,7 +42,7 @@ defmodule Genetic do
   end
 
   def select(population, opts) do
-    select_fn = Keyword.get(opts, :selection_type, Toolbox.Selection.elite() / 2)
+    select_fn = Keyword.get(opts, :selection_type, &Toolbox.Selection.elite/2)
     select_rate = Keyword.get(opts, :selection_rate, 0.8)
 
     n = round(length(population) * select_rate)

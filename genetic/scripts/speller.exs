@@ -16,8 +16,8 @@ defmodule Speller do
     String.jaro_distance(target, guess)
   end
 
-  def terminate?([best | _]), do: best.fitness == 1
+  def terminate?([best | _], _), do: best.fitness == 1
 end
-soln = Genetic.run(Speller)
+soln = Genetic.run(Speller, selection_type: fn pop, n -> Toolbox.Selection.tournament(pop, n, 3) end)
 IO.write("\n")
 IO.inspect(soln)
