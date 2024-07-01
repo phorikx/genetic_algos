@@ -36,9 +36,24 @@ defmodule NQueens do
   def terminate?(population, generation) do
     Enum.max_by(population, &NQueens.fitness_function/1).fitness == 8
   end
+
+  def repair_chromosome(chromosome) do
+    genes = MapSet.new(chromosome.genes)
+    new_genes = repair_helper(genes, 8)
+    %Chromosome{genes: new_genes, size: length(new_genes)}
+  end
+
+  defp repair_helper(chromosome, k) do
+    if MapSet.size(chromosome) >= k do
+      MapSet.to_list(chromosome)
+    else
+      num = :rand.uniform(8)
+      repair_helper(MapSet.put(chromosome, num), k)
+    end
+  end
 end
 
-soln = Genetic.run(NQueens)
+soln = Genetic.run(NQueens, crossover_type: &Toolbox.Crossover.single_point_crossover/2, repair_chromosome: &NQueens.repair_chromosome/1)
 IO.write("\n")
 IO.write("Final solution: " <> Kernel.inspect(soln))
 IO.write("\n")

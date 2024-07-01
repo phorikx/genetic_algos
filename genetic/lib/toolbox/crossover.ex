@@ -28,7 +28,7 @@ defmodule Toolbox.Crossover do
     {p1_head, p1_tail} = Enum.split(p1.genes, cx_point)
     {p2_head, p2_tail} = Enum.split(p2.genes, cx_point)
     {c1, c2} = {p1_head ++ p2_tail, p2_head ++ p1_tail}
-    {%Chromosome{genes: c1, size: p1.size}, {%Chromosome{genes: c2, size: p1.size}}}
+    {%Chromosome{genes: c1, size: p1.size}, %Chromosome{genes: c2, size: p2.size}}
   end
 
   def single_point_crossover([]), do: raise("You must have at least one parent!")
