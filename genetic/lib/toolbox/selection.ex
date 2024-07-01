@@ -23,19 +23,6 @@ defmodule Toolbox.Selection do
     tournament_helper(parents, n, tournament_size, selected)
   end
 
-  defp tournament_helper(parents, n, tournament_size, selected) do
-    if MapSet.size(selected) == n do
-      MapSet.to_list(selected)
-    else
-      chosen =
-        parents
-        |> Enum.take_random(tournament_size)
-        |> Enum.max_by(& &1.fitness)
-
-      tournament_helper(parents, n, tournament_size, MapSet.put(selected, chosen))
-    end
-  end
-
   def roulette(parents, n) do
     sum_fitness =
       parents
@@ -58,5 +45,18 @@ defmodule Toolbox.Selection do
         end
       )
     end)
+  end
+
+  defp tournament_helper(parents, n, tournament_size, selected) do
+    if MapSet.size(selected) == n do
+      MapSet.to_list(selected)
+    else
+      chosen =
+        parents
+        |> Enum.take_random(tournament_size)
+        |> Enum.max_by(& &1.fitness)
+
+      tournament_helper(parents, n, tournament_size, MapSet.put(selected, chosen))
+    end
   end
 end

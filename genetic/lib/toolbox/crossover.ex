@@ -1,4 +1,4 @@
-defmodule Toolbox.Selection do
+defmodule Toolbox.Crossover do
   alias Types.Chromosome
 
   def order_one_crossover(p1, p2) do
@@ -31,6 +31,26 @@ defmodule Toolbox.Selection do
     {%Chromosome{genes: c1, size: p1.size}, {%Chromosome{genes: c2, size: p1.size}}}
   end
 
+  def single_point_crossover([]), do: raise("You must have at least one parent!")
+  def single_point_crossover([p1 | []]), do: p1
+
+  def single_point_crossover(parents) do
+    crossover_point = :rand.uniform(hd(parents).size)
+
+    parents
+    |> Enum.chunk_every(2, 1, [hd(parents)])
+    |> Enum.map(&List.to_tuple(&1))
+    |> Enum.reduce(
+      [],
+      fn {p1, p2}, chd ->
+        {front, _} = Enum.split(p1.genes, crossover_point)
+        {_, back} = Enum.split(p2.genes, crossover_point)
+        c = %Chromosome{genes: front ++ back, size: length(p1)}
+        [c | chd]
+      end
+    )
+  end
+
   def uniform_crossover(p1, p2, rate \\ 0.5) do
     {c1, c2} =
       p1.genes
@@ -41,6 +61,19 @@ defmodule Toolbox.Selection do
         else
           {y, x}
         end
+      end)
+      |> Enum.unzip()
+
+    {%Chromosome{genes: c1, size: length(c1)}, %Chromosome{genes: c2, size: length(c2)}}
+  end
+
+  def whole_arithmetic_crossover(p1, p2, alpha) do
+    {c1, c2} =
+      p1.genes
+      |> Enum.zip(p2.genes)
+      |> Enum.map(fn {p1, p2} ->
+        {p1 * alpha + p2 * (1 - alpha), p1 * (1 - alpha) + p2 * alpha}
+        nil
       end)
       |> Enum.unzip()
 
